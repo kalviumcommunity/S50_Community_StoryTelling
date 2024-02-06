@@ -1,0 +1,11 @@
+{
+  "name": "community-storytelling",
+  "version": "1.0.0",
+  "description": "Community Input Based Story Telling platform where you can write or create stories and collaborate on others stories",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abhishek Naik",
+  "license": "ISC"
+}
