@@ -4,13 +4,16 @@ require("dotenv").config();
 
 const port = process.env.PORT || 3000;
 
-app.get("/ping", (req, res) => {
-  console.log("kk", port);
-  res.send("<h1>pong</h1>");
+app.get("/ping", (req, res, next) => {
+  try {
+    res.send("<h1>pong</h1>");
+  } catch (error) {
+    next(error);
+  }
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`🚀 server running on PORT: ${port}`);
 });
 
-module.exports = app;
+module.exports = server;
