@@ -10,7 +10,7 @@ app.get("/ping", (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("Something broke!");
+  res.status(500).send("500-Internal Server Error");
 });
 
 const server = app.listen(port, () => {
