@@ -1,4 +1,5 @@
 const express = require("express");
+const { validationResult } = require("express-validator");
 const router = express.Router();
 const User = require("../models/User");
 
@@ -15,6 +16,12 @@ router.get("/", async (req, res) => {
 
 // POST route to add a new user
 router.post("/", async (req, res) => {
+  // Validation using express-validator
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const newUser = new User(req.body);
     const savedUser = await newUser.save();
