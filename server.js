@@ -1,12 +1,18 @@
 const express = require("express");
-const app = express();
-require("dotenv").config();
+const connectDB = require("./config/dbConnect");
+const pingRoute = require("./routes/ping");
+const homeRoute = require("./routes/home");
 
+const app = express();
 const port = process.env.PORT || 3000;
 
-app.get("/ping", (req, res) => {
-  res.send("<h1>pong</h1>");
-});
+// Connect to MongoDB
+connectDB();
+
+app.use(express.json());
+
+app.use("/", homeRoute);
+app.use("/ping", pingRoute);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
