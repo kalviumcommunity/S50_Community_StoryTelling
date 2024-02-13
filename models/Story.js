@@ -16,7 +16,7 @@ const storySchema = new mongoose.Schema({
     },
     author: {
       userId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true
       },
       anonymous: {

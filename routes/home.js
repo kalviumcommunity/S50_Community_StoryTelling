@@ -20,6 +20,10 @@ router.post("/", async (req, res) => {
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);
   } catch (err) {
+    if (err instanceof mongoose.Error.ValidationError) {
+      console.error("Validation Error:", err.message);
+      return res.status(400).json({ error: err.message });
+    }
     console.error("Error adding user:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }

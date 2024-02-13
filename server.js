@@ -14,6 +14,7 @@ app.use(express.json());
 app.use("/", homeRoute);
 app.use("/ping", pingRoute);
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("500-Internal Server Error");
