@@ -4,7 +4,7 @@ const retry = require('async-retry');
 
 const connectDB = async () => {
   try {
-    if (!process.env.MONGO) {
+    if (!process.env.MONGODB_URI) {
       throw new Error("MongoDB URI is not defined in environment variables");
     }
 
@@ -13,7 +13,7 @@ const connectDB = async () => {
     // Retry connecting to MongoDB with async-retry
     await retry(async (bail, attempt) => {
       console.log(`Connecting attempt ${attempt} to MongoDB...`);
-      await mongoose.connect(process.env.MONGO);
+      await mongoose.connect(process.env.MONGODB_URI);
     }, {
       retries: 5, // Number of retry attempts
       minTimeout: 1000, // Minimum timeout in milliseconds between retries
