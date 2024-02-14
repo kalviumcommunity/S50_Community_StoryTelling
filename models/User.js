@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   },
   googleId: {
     type: String,
-    immutable: true,
+    immutable: true, //this i have added because i dont want the users or anyone or other means to change the googleid of the user
   },
   anonymousHandle: String,
   createdAt: {
