@@ -8,7 +8,7 @@ const connectDB = async () => {
       throw new Error("MongoDB URI is not defined in environment variables");
     }
 
-    console.log("Connecting to MongoDB: [HIDDEN]");
+    console.log("Connecting to MongoDB");
     
     // Retry connecting to MongoDB with async-retry
     await retry(async (bail, attempt) => {
