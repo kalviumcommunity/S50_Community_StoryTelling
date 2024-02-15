@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 
 function Idea() {
   return (
-    <>
-      <motion.div
+    <main>
+      <motion.section
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -13,7 +13,7 @@ function Idea() {
         <h1 className="text-3xl font-bold mb-8">
           Community Input Based Storytelling
         </h1>
-        <div className="mb-12">
+        <section>
           <h2 className="text-2xl font-semibold mb-4">Project Overview</h2>
           <p className="text-gray-800 leading-relaxed">
             Welcome to the Community Input Based Storytelling platform! This
@@ -23,8 +23,8 @@ function Idea() {
             line, this platform provides a creative space for community-driven
             narratives.
           </p>
-        </div>
-        <div>
+        </section>
+        <section>
           <h2 className="text-2xl font-semibold mb-4">Features</h2>
           <ul className="grid gap-6">
             <li>
@@ -75,9 +75,9 @@ function Idea() {
               </details>
             </li>
           </ul>
-        </div>
-      </motion.div>
-    </>
+        </section>
+      </motion.section>
+    </main>
   );
 }
 
