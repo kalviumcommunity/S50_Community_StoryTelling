@@ -24,7 +24,7 @@ const LandingPage = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded flex items-center"
-          onClick={() => console.log("Sign Up clicked")}
+          onClick={() => console.log("TODO: Implement sign-up functionality")}
         >
           <FaUserPlus className="mr-2" /> Sign Up
         </motion.div>
@@ -32,7 +32,7 @@ const LandingPage = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded flex items-center"
-          onClick={() => console.log("Login clicked")}
+          onClick={() => console.log("TODO: Implement login functionality")}
         >
           <FaSignInAlt className="mr-2" /> Login
         </motion.div>
