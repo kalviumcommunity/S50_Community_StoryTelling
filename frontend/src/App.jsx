@@ -1,9 +1,9 @@
 import React from 'react';
-import Idea from './components/Project Idea/idea';
+import LandingPage from './components/LandingPage/LandingPage';
 function App() {
   return (
   <>
-  <Idea/>
+  <LandingPage/>
   </>
   );
 }
