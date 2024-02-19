@@ -1,7 +1,8 @@
 const express = require("express");
 const connectDB = require("./config/dbConnect");
 const pingRoute = require("./routes/ping");
-const homeRoute = require("./routes/home");
+const userRoute = require("./routes/user");
+const storyRoute = require("./routes/story");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,7 +12,8 @@ connectDB();
 
 app.use(express.json());
 
-app.use("/", homeRoute);
+app.use("/user", userRoute);
+app.use("/story", storyRoute);
 app.use("/ping", pingRoute);
 
 // Middleware for handling 404 errors
