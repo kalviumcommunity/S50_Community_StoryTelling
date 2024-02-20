@@ -10,11 +10,26 @@ const validateStoryId = [
   param("id").isMongoId().withMessage("Invalid story ID"),
 ];
 
+// function validateStoryId(req, res, next){
+
+//   Story.findById(req.params.id)
+//   .then((resp)=>{
+//     if(resp.length == 0){
+//       res.status(404).send("not found");
+//     } else{
+//       req.story = resp;
+//       next();
+//     }
+//   })
+// }
+
 // Validation middleware for story data
 const validateStoryData = [
   body("title").notEmpty().withMessage("Title is required"),
   body("paragraphs").isArray().withMessage("Paragraphs must be an array"),
 ];
+
+
 
 // GET route to fetch all stories
 router.get("/", async (req, res) => {
@@ -68,27 +83,31 @@ router.post("/", validateStoryData, async (req, res) => {
   }
 });
 
-// PUT route to update a story
-router.put("/:id", validateStoryId, validateStoryData, async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedStory = await Story.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    // Find the story by ID
+    let updatedStory = await Story.findOne({ _id: id });
+
+    // Check if the story exists
     if (!updatedStory) {
       return res.status(404).json({ error: "Story not found with provided ID" });
     }
+
+    // Append the new content to the first paragraph's content
+    updatedStory.paragraphs[0].content += req.body.content;
+
+    // Save the updated story
+    await updatedStory.save();
+
+    // Respond with the updated story
     res.json(updatedStory);
   } catch (err) {
     console.error("Error updating story:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // PATCH route to partially update a story
 router.patch("/:id", validateStoryId, validateStoryData, async (req, res) => {
