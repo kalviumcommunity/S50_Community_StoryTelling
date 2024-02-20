@@ -10,26 +10,11 @@ const validateStoryId = [
   param("id").isMongoId().withMessage("Invalid story ID"),
 ];
 
-// function validateStoryId(req, res, next){
-
-//   Story.findById(req.params.id)
-//   .then((resp)=>{
-//     if(resp.length == 0){
-//       res.status(404).send("not found");
-//     } else{
-//       req.story = resp;
-//       next();
-//     }
-//   })
-// }
-
 // Validation middleware for story data
 const validateStoryData = [
   body("title").notEmpty().withMessage("Title is required"),
   body("paragraphs").isArray().withMessage("Paragraphs must be an array"),
 ];
-
-
 
 // GET route to fetch all stories
 router.get("/", async (req, res) => {
@@ -53,7 +38,9 @@ router.get("/:id", validateStoryId, async (req, res) => {
     const { id } = req.params;
     const story = await Story.findById(id);
     if (!story) {
-      return res.status(404).json({ error: "Story not found with provided ID" });
+      return res
+        .status(404)
+        .json({ error: "Story not found with provided ID" });
     }
     res.json(story);
   } catch (err) {
@@ -91,7 +78,9 @@ router.put("/:id", async (req, res) => {
 
     // Check if the story exists
     if (!updatedStory) {
-      return res.status(404).json({ error: "Story not found with provided ID" });
+      return res
+        .status(404)
+        .json({ error: "Story not found with provided ID" });
     }
 
     // Append the new content to the first paragraph's content
@@ -108,7 +97,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-
 // PATCH route to partially update a story
 router.patch("/:id", validateStoryId, validateStoryData, async (req, res) => {
   const errors = validationResult(req);
@@ -122,7 +110,9 @@ router.patch("/:id", validateStoryId, validateStoryData, async (req, res) => {
       new: true,
     });
     if (!updatedStory) {
-      return res.status(404).json({ error: "Story not found with provided ID" });
+      return res
+        .status(404)
+        .json({ error: "Story not found with provided ID" });
     }
     res.json(updatedStory);
   } catch (err) {
@@ -142,7 +132,9 @@ router.delete("/:id", validateStoryId, async (req, res) => {
     const { id } = req.params;
     const deletedStory = await Story.findByIdAndDelete(id);
     if (!deletedStory) {
-      return res.status(404).json({ error: "Story not found with provided ID" });
+      return res
+        .status(404)
+        .json({ error: "Story not found with provided ID" });
     }
     res.json({ message: "Story deleted successfully" });
   } catch (err) {
