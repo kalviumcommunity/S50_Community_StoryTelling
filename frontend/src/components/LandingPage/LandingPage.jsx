@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   return (
@@ -36,6 +37,9 @@ const LandingPage = () => {
         >
           <FaSignInAlt className="mr-2" /> Login
         </motion.div>
+        <Link to="/story" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center">
+          <FaSignInAlt className="mr-2" /> Test
+        </Link>
       </div>
     </motion.div>
   );

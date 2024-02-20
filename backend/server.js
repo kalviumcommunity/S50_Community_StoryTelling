@@ -3,6 +3,7 @@ const connectDB = require("./config/dbConnect");
 const pingRoute = require("./routes/ping");
 const userRoute = require("./routes/user");
 const storyRoute = require("./routes/story");
+const cors = require("cors")
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,9 +13,12 @@ connectDB();
 
 app.use(express.json());
 
+app.use(cors())
+
 app.use("/user", userRoute);
 app.use("/story", storyRoute);
 app.use("/ping", pingRoute);
+
 
 // Middleware for handling 404 errors
 app.use((req, res, next) => {
