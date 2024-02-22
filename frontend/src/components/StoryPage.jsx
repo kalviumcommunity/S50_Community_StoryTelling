@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaThumbsUp, FaEdit } from "react-icons/fa";
+import { FaThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
 
 const StoryPage = () => {
   const [stories, setStories] = useState(null);
@@ -14,7 +14,7 @@ const StoryPage = () => {
   }, []);
 
   const fetchData = () => {
-    axios.get("http://localhost:3000/story")
+    axios.get("https://community-storytelling.onrender.com/story")
       .then((response) => {
         console.log(response.data);
         setStories(response.data);
@@ -38,7 +38,7 @@ const StoryPage = () => {
   };
 
   const handleSave = () => {
-    axios.put(`http://localhost:3000/story/${editingStory._id}`, {
+    axios.put(`https://community-storytelling.onrender.com/story/${editingStory._id}`, {
       content: editedParagraph
     })
     .then(response => {
@@ -63,7 +63,7 @@ const StoryPage = () => {
 
   const handlePost = () => {
     console.log("Posting story:", newTitle, newContent); // Check if the function is being called with correct data
-    axios.post("http://localhost:3000/story", {
+    axios.post("https://community-storytelling.onrender.com/story", {
       title: newTitle,
       paragraphs: [{ content: newContent }]
     })
@@ -79,8 +79,18 @@ const StoryPage = () => {
       console.error("Error posting story:", error);
     });
   };
-  
-  
+
+  const handleDelete = (storyId) => {
+    axios.delete(`https://community-storytelling.onrender.com/story/${storyId}`)
+      .then(response => {
+        console.log("Story deleted successfully:", response.data);
+        const updatedStories = stories.filter(story => story._id !== storyId);
+        setStories(updatedStories);
+      })
+      .catch(error => {
+        console.error("Error deleting story:", error);
+      });
+  };
 
   return (
     <div className="container mx-auto">
@@ -126,11 +136,18 @@ const StoryPage = () => {
                   Like
                 </button>
                 <button
-                  className="flex items-center text-green-500"
+                  className="flex items-center text-green-500 mr-4"
                   onClick={() => handleEdit(story)}
                 >
                   <FaEdit className="mr-2" />
                   Edit
+                </button>
+                <button
+                  className="flex items-center text-red-500"
+                  onClick={() => handleDelete(story._id)}
+                >
+                  <FaTrash className="mr-2" />
+                  Delete
                 </button>
               </div>
             </div>
@@ -143,10 +160,11 @@ const StoryPage = () => {
       {/* Modal for editing paragraph */}
       {editingStory && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-75">
-          <div className="bg-white p-6 rounded-lg">
+          <div className="bg-white p-10 rounded-lg">
             <h2 className="text-xl font-bold mb-4">Edit Paragraph</h2>
+            <p className="text-gray-600 mb-4">Remove the old content to continue the story</p>
             <textarea
-              className="w-full h-40 border border-gray-300 rounded p-2 mb-4"
+              className="w-96 h-96 border border-gray-300 rounded p-4 mb-4"
               value={editedParagraph}
               onChange={(e) => setEditedParagraph(e.target.value)}
             ></textarea>
