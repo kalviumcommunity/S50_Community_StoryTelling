@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaThumbsUp, FaEdit } from "react-icons/fa";
+import { FaThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
+
+
 
 const StoryPage = () => {
   const [stories, setStories] = useState(null);
@@ -14,7 +16,8 @@ const StoryPage = () => {
   }, []);
 
   const fetchData = () => {
-    axios.get("http://localhost:3000/story")
+    axios
+      .get("http://localhost:3000/story")
       .then((response) => {
         console.log(response.data);
         setStories(response.data);
@@ -38,56 +41,88 @@ const StoryPage = () => {
   };
 
   const handleSave = () => {
-    axios.put(`http://localhost:3000/story/${editingStory._id}`, {
-      content: editedParagraph
-    })
-    .then(response => {
-      console.log("Paragraph updated successfully:", response.data);
-      const updatedStories = stories.map(story => {
-        if (story._id === editingStory._id) {
-          return {
-            ...story,
-            paragraphs: [{ content: editedParagraph }, ...story.paragraphs.slice(1)]
-          };
-        }
-        return story;
+    // Check if editedParagraph is empty
+    if (!editedParagraph.trim()) {
+      // Display a window alert notifying the user
+      window.alert("Paragraph cannot be empty.");
+      return;
+    }
+  
+    axios
+      .put(`http://localhost:3000/story/${editingStory._id}`, {
+        content: editedParagraph,
+      })
+      .then((response) => {
+        console.log("Paragraph updated successfully:", response.data);
+        const updatedStories = stories.map((story) => {
+          if (story._id === editingStory._id) {
+            return {
+              ...story,
+              paragraphs: [
+                { content: editedParagraph },
+                ...story.paragraphs.slice(1),
+              ],
+            };
+          }
+          return story;
+        });
+        setStories(updatedStories);
+        handleCloseModal();
+        fetchData();
+      })
+      .catch((error) => {
+        console.error("Error updating paragraph:", error);
       });
-      setStories(updatedStories);
-      handleCloseModal();
-      // No need to fetch data again since the paragraph is updated in the frontend
-    })
-    .catch(error => {
-      console.error("Error updating paragraph:", error);
-    });
   };
+  
+  
 
   const handlePost = () => {
     console.log("Posting story:", newTitle, newContent); // Check if the function is being called with correct data
-    axios.post("http://localhost:3000/story", {
-      title: newTitle,
-      paragraphs: [{ content: newContent }]
-    })
-    .then(response => {
-      console.log("Post successful:", response.data);
-      // Append the new story to the existing stories
-      setStories(prevStories => [...prevStories, response.data]);
-      // Clear input fields
-      setNewTitle("");
-      setNewContent("");
-    })
-    .catch(error => {
-      console.error("Error posting story:", error);
-    });
+    axios
+      .post("http://localhost:3000/story", {
+        title: newTitle,
+        paragraphs: [{ content: newContent }],
+      })
+      .then((response) => {
+        console.log("Post successful:", response.data);
+        // Append the new story to the existing stories
+        setStories((prevStories) => [...prevStories, response.data]);
+        // Clear input fields
+        setNewTitle("");
+        setNewContent("");
+      })
+      .catch((error) => {
+        console.error("Error posting story:", error);
+      });
   };
-  
-  
+
+  const handleDelete = (storyId) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this story?"
+    );
+    if (isConfirmed) {
+      axios
+        .delete(`http://localhost:3000/story/${storyId}`)
+        .then((response) => {
+          console.log("Story deleted successfully:", response.data);
+          const updatedStories = stories.filter(
+            (story) => story._id !== storyId
+          );
+          setStories(updatedStories);
+        })
+        .catch((error) => {
+          console.error("Error deleting story:", error);
+        });
+    }
+  };
 
   return (
-    <div className="container mx-auto">
+    <div className="bg-gradient-to-bl from-indigo-900 via-indigo-400 to-indigo-900 min-h-screen flex flex-col justify-center items-center text-white">
       <h1 className="text-4xl font-bold mb-8 text-center">Stories</h1>
 
       {/* Create Post Section */}
-      <div className="mb-8">
+      <div className=" text-black mb-8">
         <h2 className="text-xl font-bold">Create Post</h2>
         <input
           type="text"
@@ -95,12 +130,14 @@ const StoryPage = () => {
           className="w-full border border-gray-300 rounded p-2 mb-4"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
+          required
         />
         <textarea
           placeholder="Content"
           className="w-full h-40 border border-gray-300 rounded p-2 mb-4"
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
+          required
         ></textarea>
         <button
           className="bg-blue-500 text-white py-2 px-4 rounded"
@@ -126,11 +163,18 @@ const StoryPage = () => {
                   Like
                 </button>
                 <button
-                  className="flex items-center text-green-500"
+                  className="flex items-center text-green-500 mr-4"
                   onClick={() => handleEdit(story)}
                 >
                   <FaEdit className="mr-2" />
                   Edit
+                </button>
+                <button
+                  className="flex items-center text-red-500"
+                  onClick={() => handleDelete(story._id)}
+                >
+                  <FaTrash className="mr-2" />
+                  Delete
                 </button>
               </div>
             </div>
@@ -142,25 +186,22 @@ const StoryPage = () => {
 
       {/* Modal for editing paragraph */}
       {editingStory && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-75">
-          <div className="bg-white p-6 rounded-lg">
+        <div className="text-black fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-75">
+          <div className="bg-white p-10 rounded-lg">
             <h2 className="text-xl font-bold mb-4">Edit Paragraph</h2>
+            <p className="text-gray-600 mb-4">
+              Remove the old content to continue the story
+            </p>
             <textarea
-              className="w-full h-40 border border-gray-300 rounded p-2 mb-4"
+              className="w-96 h-96 border border-gray-300 rounded p-4 mb-4"
               value={editedParagraph}
               onChange={(e) => setEditedParagraph(e.target.value)}
             ></textarea>
             <div className="flex justify-end">
-              <button
-                className="text-blue-500 mr-4"
-                onClick={handleCloseModal}
-              >
+              <button className="text-blue-500 mr-4" onClick={handleCloseModal}>
                 Cancel
               </button>
-              <button
-                className="text-green-500"
-                onClick={handleSave}
-              >
+              <button className="text-green-500" onClick={handleSave}>
                 Save
               </button>
             </div>
