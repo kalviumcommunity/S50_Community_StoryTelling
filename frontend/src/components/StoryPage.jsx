@@ -17,7 +17,7 @@ const StoryPage = () => {
 
   const fetchData = () => {
     axios
-      .get("http://localhost:3000/story")
+      .get("https://community-storytelling.onrender.com/story")
       .then((response) => {
         console.log(response.data);
         setStories(response.data);
@@ -49,7 +49,7 @@ const StoryPage = () => {
     }
   
     axios
-      .put(`http://localhost:3000/story/${editingStory._id}`, {
+      .put(`https://community-storytelling.onrender.com/story/${editingStory._id}`, {
         content: editedParagraph,
       })
       .then((response) => {
@@ -80,7 +80,7 @@ const StoryPage = () => {
   const handlePost = () => {
     console.log("Posting story:", newTitle, newContent); // Check if the function is being called with correct data
     axios
-      .post("http://localhost:3000/story", {
+      .post("https://community-storytelling.onrender.com/story", {
         title: newTitle,
         paragraphs: [{ content: newContent }],
       })
@@ -103,7 +103,7 @@ const StoryPage = () => {
     );
     if (isConfirmed) {
       axios
-        .delete(`http://localhost:3000/story/${storyId}`)
+        .delete(`https://community-storytelling.onrender.com/story/${storyId}`)
         .then((response) => {
           console.log("Story deleted successfully:", response.data);
           const updatedStories = stories.filter(
