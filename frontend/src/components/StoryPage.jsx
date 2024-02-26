@@ -1,3 +1,4 @@
+// StoryPage.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
@@ -9,9 +10,19 @@ const StoryPage = () => {
   const [editedParagraph, setEditedParagraph] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
+  const [username, setUsername] = useState("");
+
+  function getCookie(name) {
+    const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return cookieValue ? cookieValue.pop() : '';
+  }
 
   useEffect(() => {
     fetchData();
+    const storedUsername = getCookie("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
   }, []);
 
   const fetchData = () => {
@@ -113,15 +124,20 @@ const StoryPage = () => {
         });
     }
   };
-  //  from-red-200 to-red-600
+
+  function deleteCookie(name) {
+    document.cookie =
+      name + "=; expires=Thu, 01 Jan 1000 00:00:00 UTC; path=/;";
+  }
+
+  const handleLogout = () => {
+    deleteCookie("username");
+    window.location.href = "/";
+  };
 
   return (
     <div className="relative bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center text-white">
-      <UserInfoBox
-        username="Your Username"
-        email="your.email@example.com"
-        onLogout={() => console.log("Logout clicked")}
-      />
+      <UserInfoBox username={username} onLogout={handleLogout} />
       <h1 className="text-4xl font-bold mb-8 text-center">Stories</h1>
 
       {/* Create Post Section */}

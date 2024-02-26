@@ -75,8 +75,8 @@ const SignupForm = () => {
 
   return (
     <div className="text-black bg-gradient-to-bl from-indigo-900 via-indigo-400 to-indigo-900 min-h-screen flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-bold mb-8 text-center text-white">Signup</h1>
-      <form onSubmit={handleSubmit} className="text-white">
+      <h1 className="text-4xl font-bold mb-8 text-center text-black">Signup</h1>
+      <form onSubmit={handleSubmit} className="text-black">
         <div className="text-black mb-4">
           <input
             type="text"
@@ -129,7 +129,7 @@ const SignupForm = () => {
         </div>
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded"
+          className="bg-blue-500 text-black py-2 px-4 rounded"
         >
           Signup
         </button>
