@@ -6,7 +6,7 @@ const storyRoute = require("./routes/story"); // Importing the story route
 const cors = require("cors"); // Importing cors middleware
 
 const app = express(); // Creating an instance of express
-const port = process.env.PORT || 3000; // Setting the port to the environment variable PORT or defaulting to 3000
+const port = process.env.PORT || 3001; // Setting the port to the environment variable PORT or defaulting to 3001
 
 // Connect to MongoDB
 connectDB(); // Connecting to MongoDB
@@ -27,7 +27,8 @@ app.use((req, res, next) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack); // Logging the error stack trace
-  res.status(500).send("500 - Internal Server Error"); // Sending 500 response for internal server errors
+  res.status(500).send("500 - Internal Server Error: Something unexpected happened on the server. Please try again later or contact support for assistance.");
+  // Sending 500 response for internal server errors
 });
 
 const server = app.listen(port, () => {

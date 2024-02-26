@@ -1,31 +1,29 @@
-const mongoose = require("mongoose"); // Importing mongoose library for MongoDB interactions
+const mongoose = require("mongoose");
 
-// Defining the schema for the 'users' collection in MongoDB
 const userSchema = new mongoose.Schema({
-  name: {
+  username: {
     type: String,
-    required: true, // Name is a required field
+    required: true,
   },
   email: {
     type: String,
-    required: true, // Email is a required field
-    unique: true, // Email must be unique
+    required: true,
+    unique: true,
   },
-  googleId: {
+  password: {
     type: String,
-    immutable: true, // Google ID should not be modified once set
+    required: true,
   },
-  anonymousHandle: String, // Handle for anonymous users
   createdAt: {
     type: Date,
-    default: Date.now, // Default creation timestamp
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now, // Default update timestamp
+    default: Date.now,
   },
 });
 
-const User = mongoose.model("User", userSchema); // Creating a model named 'User' from the userSchema
+const User = mongoose.model("User", userSchema);
 
-module.exports = User; // Exporting the User model for external use
+module.exports = User;
