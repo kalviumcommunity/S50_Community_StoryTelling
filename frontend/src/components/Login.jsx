@@ -20,18 +20,25 @@ const LoginForm = () => {
     const validationErrors = validate(formData);
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await fetch("http://localhost:3000/user/login", { // Update the URL to /user/login
+        const response = await fetch("http://localhost:3000/user/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
         });
+
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
+
         const data = await response.json();
         console.log("Login response:", data);
+
+        // Save username in cookies
+        document.cookie = `username=${formData.username}`;
+        document.cookie = `email=${formData.email}`;
+
         setIsLoggedIn(true);
         navigate("/story");
       } catch (error) {
@@ -42,7 +49,6 @@ const LoginForm = () => {
       setErrors(validationErrors);
     }
   };
-  
 
   const validate = (data) => {
     const errors = {};
@@ -60,9 +66,9 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="text-white bg-gradient-to-bl from-indigo-900 via-indigo-400 to-indigo-900 min-h-screen flex flex-col justify-center items-center">
+    <div className="text-black bg-gradient-to-bl from-indigo-900 via-indigo-400 to-indigo-900 min-h-screen flex flex-col justify-center items-center">
       <h1 className="text-4xl font-bold mb-8 text-center">Login</h1>
-      <form onSubmit={handleSubmit} className="text-white">
+      <form onSubmit={handleSubmit} className="text-black">
         <div className="mb-4">
           <input
             type="text"
@@ -87,13 +93,19 @@ const LoginForm = () => {
           />
           {errors.password && <p className="text-red-500">{errors.password}</p>}
         </div>
-        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+        <button
+          type="submit"
+          className="bg-blue-500 text-black py-2 px-4 rounded"
+        >
           Login
         </button>
       </form>
       {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
-      <p className="mt-4">
-        Don't have an account? <Link to="/signup" className="text-white">Signup here</Link>
+      <p className="mt-4 text-white">
+        Don't have an account?{" "}
+        <Link to="/signup" className="text-black">
+          Signup here
+        </Link>
       </p>
     </div>
   );
