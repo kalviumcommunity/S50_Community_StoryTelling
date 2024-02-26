@@ -4,6 +4,7 @@ const { body, param } = require("express-validator"); // Importing body and para
 const router = express.Router(); // Creating a router object
 const User = require("../models/User"); // Importing the User model
 const mongoose = require("mongoose"); // Importing mongoose library for MongoDB interactions
+const bcrypt = require("bcrypt");
 
 // Validation middleware for user ID
 const validateUserId = [
@@ -12,9 +13,10 @@ const validateUserId = [
 
 // Validation middleware for user data
 const validateUserData = [
-  body("name").notEmpty().withMessage("Name is required"), // Checking if name is provided
-  body("email").isEmail().withMessage("Invalid email address"), // Checking if email is a valid email address
-  body("googleId").optional().isString().withMessage("Invalid googleId"), // Checking if googleId is a string (if provided)
+  body("username").notEmpty().withMessage("Name is required"), // Checking if name is provided
+  // body("email").isEmail().withMessage("Invalid email address"), // Checking if email is a valid email address
+  body("password").notEmpty().withMessage("Password is required"), // Checking if password is provided and not empty
+  // body("googleId").optional().isString().withMessage("Invalid googleId"), // Checking if googleId is a string (if provided)
   // Add additional validation rules for other fields as needed
 ];
 
@@ -57,7 +59,10 @@ router.post("/", validateUserData, async (req, res) => {
   }
 
   try {
-    const newUser = new User(req.body); // Creating a new user instance
+    const { username, email, password } = req.body; // Extracting username, email, and password from request body
+    const hashedPassword = await bcrypt.hash(password, 10); // Hashing the password
+    const newUser = new User({ username, email, password: hashedPassword }); // Creating a new user instance with hashed password
+    console.log(newUser);
     const savedUser = await newUser.save(); // Saving the new user to the database
     res.status(201).json(savedUser); // Sending created response with the saved user
   } catch (err) {
@@ -67,6 +72,27 @@ router.post("/", validateUserData, async (req, res) => {
     }
     console.error("Error adding user:", err); // Logging error if adding user fails
     res.status(500).json({ error: "Internal Server Error" }); // Sending internal server error response
+  }
+});
+router.post("/login", validateUserData, async (req, res) => {
+  const errors = validationResult(req); 
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() }); 
+  }
+  try {
+    const { username, password } = req.body; 
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid username or password" }); 
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+    res.status(200).json({ message: "Login successful", user });
+  } catch (err) {
+    console.error("Error during login:", err); 
+    res.status(500).json({ error: "Internal Server Error" }); 
   }
 });
 

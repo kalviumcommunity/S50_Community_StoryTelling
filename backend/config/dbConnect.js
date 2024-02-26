@@ -21,6 +21,9 @@ const connectDB = async () => { // Defining an asynchronous function to connect 
       onRetry: (err, attempt) => { // Executing this function on each retry attempt
         console.log(`Retry attempt ${attempt} failed: ${err}`); // Logging failed retry attempt
       }
+    }).catch(error => {
+      console.error("Error during retry attempts:", error); // Handle error during retry attempts
+      throw error; // Throw error to be caught by the outer catch block
     });
 
     console.log("Connected to MongoDB"); // Logging successful connection to MongoDB

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
-
-
+import UserInfoBox from "./UserInfo";
 
 const StoryPage = () => {
   const [stories, setStories] = useState(null);
@@ -17,7 +16,7 @@ const StoryPage = () => {
 
   const fetchData = () => {
     axios
-      .get("https://community-storytelling.onrender.com/story")
+      .get("http://localhost:3000/story")
       .then((response) => {
         console.log(response.data);
         setStories(response.data);
@@ -47,9 +46,9 @@ const StoryPage = () => {
       window.alert("Paragraph cannot be empty.");
       return;
     }
-  
+
     axios
-      .put(`https://community-storytelling.onrender.com/story/${editingStory._id}`, {
+      .put(`http://localhost:3000/story/${editingStory._id}`, {
         content: editedParagraph,
       })
       .then((response) => {
@@ -74,13 +73,11 @@ const StoryPage = () => {
         console.error("Error updating paragraph:", error);
       });
   };
-  
-  
 
   const handlePost = () => {
     console.log("Posting story:", newTitle, newContent); // Check if the function is being called with correct data
     axios
-      .post("https://community-storytelling.onrender.com/story", {
+      .post("http://localhost:3000/story", {
         title: newTitle,
         paragraphs: [{ content: newContent }],
       })
@@ -103,7 +100,7 @@ const StoryPage = () => {
     );
     if (isConfirmed) {
       axios
-        .delete(`https://community-storytelling.onrender.com/story/${storyId}`)
+        .delete(`http://localhost:3000/story/${storyId}`)
         .then((response) => {
           console.log("Story deleted successfully:", response.data);
           const updatedStories = stories.filter(
@@ -116,9 +113,15 @@ const StoryPage = () => {
         });
     }
   };
+  //  from-red-200 to-red-600
 
   return (
-    <div className="bg-gradient-to-bl from-indigo-900 via-indigo-400 to-indigo-900 min-h-screen flex flex-col justify-center items-center text-white">
+    <div className="relative bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center text-white">
+      <UserInfoBox
+        username="Your Username"
+        email="your.email@example.com"
+        onLogout={() => console.log("Logout clicked")}
+      />
       <h1 className="text-4xl font-bold mb-8 text-center">Stories</h1>
 
       {/* Create Post Section */}
