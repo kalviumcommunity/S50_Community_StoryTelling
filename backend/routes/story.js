@@ -1,9 +1,13 @@
+require("dotenv").config();
 const express = require("express"); // Importing express library
 const { validationResult } = require("express-validator"); // Importing validationResult function from express-validator
 const { body, param } = require("express-validator"); // Importing body and param functions from express-validator
 const router = express.Router(); // Creating a router object
 const mongoose = require("mongoose"); // Importing mongoose library for MongoDB interactions
 const Story = require("../models/Story"); // Importing the Story model
+const jwt = require("jsonwebtoken");
+const User = require('../models/User');
+const SECRET_KEY = process.env.JWT_SECRET_KEY
 
 // Validation middleware for story ID
 const validateStoryId = [
@@ -57,6 +61,26 @@ router.post("/", validateStoryData, async (req, res) => {
   }
 
   try {
+    const {token} = req.body
+    console.log(req.body)
+    // const token = req.headers; // Extracting the token from the Authorization header
+    // console.log("Token:", token); // Logging the token
+    // console.log();
+    // const { token } = req.body;
+    const payload = jwt.verify(token, SECRET_KEY);
+    // console.log("payload", payload);
+    const username = payload.username;
+    // console.log("name",username);
+    const user = await User.find({ username }); // Finding the user based on the username
+    if (!user) {
+      return res.status(404).json({ error: "User not found" }); // Sending not found response if user not found
+    }
+    // console.log("user",user);
+    req.body.paragraphs[0].author = user[0].username;
+    console.log(req.body.paragraphs[0].author)
+    // console.log(user[0]._id)
+    // console.log(req.body);
+    // console.log(req.body)
     const newStory = new Story(req.body); // Creating a new story instance
     const savedStory = await newStory.save(); // Saving the new story to the database
     res.status(201).json(savedStory); // Sending created response with the saved story

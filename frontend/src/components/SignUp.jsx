@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const SignupForm = () => {
@@ -74,8 +75,14 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="text-black bg-gradient-to-bl from-indigo-900 via-indigo-400 to-indigo-900 min-h-screen flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-bold mb-8 text-center text-black">Signup</h1>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+      className="text-black bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center"
+    >
+      <h1 className="text-4xl font-bold mb-8 text-center text-white">SIGN UP</h1>
       <form onSubmit={handleSubmit} className="text-black">
         <div className="text-black mb-4">
           <input
@@ -136,11 +143,11 @@ const SignupForm = () => {
       </form>
       <p className="mt-4 text-white">
         Already have an account?{" "}
-        <Link to="/login" className="text-black">
+        <Link to="/login" className="text-blue-400">
           Login here
         </Link>
       </p>
-    </div>
+    </motion.div>
   );
 };
 

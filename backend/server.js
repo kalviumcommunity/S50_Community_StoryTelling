@@ -4,6 +4,8 @@ const pingRoute = require("./routes/ping"); // Importing the ping route
 const userRoute = require("./routes/user"); // Importing the user route
 const storyRoute = require("./routes/story"); // Importing the story route
 const cors = require("cors"); // Importing cors middleware
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 const app = express(); // Creating an instance of express
 const port = process.env.PORT || 3001; // Setting the port to the environment variable PORT or defaulting to 3001
@@ -14,6 +16,8 @@ connectDB(); // Connecting to MongoDB
 app.use(express.json()); // Parsing JSON requests
 
 app.use(cors()); // Enabling CORS
+
+app.use(cookieParser()); //To parse Cookies
 
 app.use("/user", userRoute); // Using the user route for requests starting with /user
 app.use("/story", storyRoute); // Using the story route for requests starting with /story
@@ -27,7 +31,11 @@ app.use((req, res, next) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack); // Logging the error stack trace
-  res.status(500).send("500 - Internal Server Error: Something unexpected happened on the server. Please try again later or contact support for assistance.");
+  res
+    .status(500)
+    .send(
+      "500 - Internal Server Error: Something unexpected happened on the server. Please try again later or contact support for assistance."
+    );
   // Sending 500 response for internal server errors
 });
 
