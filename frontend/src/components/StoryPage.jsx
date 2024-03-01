@@ -12,17 +12,17 @@ const StoryPage = () => {
   const [newContent, setNewContent] = useState("");
   const [username, setUsername] = useState("");
 
-  function getCookie(name) {
-    const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-    return cookieValue ? cookieValue.pop() : '';
-  }
+  // function getCookie(name) {
+  //   const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  //   return cookieValue ? cookieValue.pop() : '';
+  // }
 
   useEffect(() => {
     fetchData();
-    const storedUsername = getCookie("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
+    // const storedUsername = getCookie("username");
+    // if (storedUsername) {
+    //   setUsername(storedUsername);
+    // }
   }, []);
 
   const fetchData = () => {
@@ -86,11 +86,12 @@ const StoryPage = () => {
   };
 
   const handlePost = () => {
-    console.log("Posting story:", newTitle, newContent); // Check if the function is being called with correct data
+    console.log("Posting story:", newTitle, newContent);
     axios
       .post("http://localhost:3000/story", {
         title: newTitle,
         paragraphs: [{ content: newContent }],
+        token: document.cookie.replace("username=", ""),
       })
       .then((response) => {
         console.log("Post successful:", response.data);
@@ -125,19 +126,20 @@ const StoryPage = () => {
     }
   };
 
-  function deleteCookie(name) {
-    document.cookie =
-      name + "=; expires=Thu, 01 Jan 1000 00:00:00 UTC; path=/;";
-  }
+  // function deleteCookie(name) {
+  //   document.cookie =
+  //     name + "=; expires=Thu, 01 Jan 1000 00:00:00 UTC; path=/;";
+  // }
 
-  const handleLogout = () => {
-    deleteCookie("username");
-    window.location.href = "/";
-  };
+  // const handleLogout = () => {
+  //   // deleteCookie("username");
+  //   window.location.href = "/";
+  // };
 
   return (
     <div className="relative bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center text-white">
-      <UserInfoBox username={username} onLogout={handleLogout} />
+      <UserInfoBox username={username} />
+      {/* onLogout={handleLogout} */}
       <h1 className="text-4xl font-bold mb-8 text-center">Stories</h1>
 
       {/* Create Post Section */}
@@ -195,6 +197,9 @@ const StoryPage = () => {
                   <FaTrash className="mr-2" />
                   Delete
                 </button>
+                <span className="ml-2 text-white bg-black inline-block shadow-md p-1.5 rounded-sm">
+                  Posted by: {story.postedBy}
+                </span>
               </div>
             </div>
           ))}

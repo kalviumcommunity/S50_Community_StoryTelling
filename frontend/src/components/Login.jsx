@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
@@ -35,9 +36,9 @@ const LoginForm = () => {
         const data = await response.json();
         console.log("Login response:", data);
 
-        // Save username in cookies
-        document.cookie = `username=${formData.username}`;
-        document.cookie = `email=${formData.email}`;
+        // Save JWT token in cookie
+        document.cookie = `username=${data.token}; expires=${new Date(Date.now() + 3600000).toUTCString()}; path=/`; 
+        // console.log("kk",document.cookie)
 
         setIsLoggedIn(true);
         navigate("/story");
@@ -62,12 +63,18 @@ const LoginForm = () => {
   };
 
   if (isLoggedIn) {
-    return <Redirect to="/story" />;
+    navigate("/story");
   }
 
   return (
-    <div className="text-black bg-gradient-to-bl from-indigo-900 via-indigo-400 to-indigo-900 min-h-screen flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-bold mb-8 text-center">Login</h1>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+      className="text-black bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center"
+    >
+      <h1 className="text-4xl font-bold mb-8 text-center text-white">LOGIN</h1>
       <form onSubmit={handleSubmit} className="text-black">
         <div className="mb-4">
           <input
@@ -103,11 +110,11 @@ const LoginForm = () => {
       {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
       <p className="mt-4 text-white">
         Don't have an account?{" "}
-        <Link to="/signup" className="text-black">
+        <Link to="/signup" className="text-blue-400">
           Signup here
         </Link>
       </p>
-    </div>
+    </motion.div>
   );
 };
 
