@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
 import UserInfoBox from "./UserInfo";
+import { useNavigate } from "react-router-dom";
 
 const StoryPage = () => {
+  const navigate = useNavigate();
   const [stories, setStories] = useState(null);
   const [editingStory, setEditingStory] = useState(null);
   const [editedParagraph, setEditedParagraph] = useState("");
@@ -20,7 +22,7 @@ const StoryPage = () => {
 
   const fetchData = () => {
     axios
-      .get("http://localhost:3000/story")
+      .get("https://community-storytelling.onrender.com/story")
       .then((response) => {
         setStories(response.data);
         // Extract unique usernames from stories and set them to the state
@@ -50,6 +52,11 @@ const StoryPage = () => {
     setEditingStory(null);
     setEditedParagraph("");
   };
+  const handleLogout = () => {
+    document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    navigate("/login");
+  };
+
 
   const handleSave = () => {
     // Check if editedParagraph is empty
@@ -60,7 +67,7 @@ const StoryPage = () => {
     }
 
     axios
-      .put(`http://localhost:3000/story/${editingStory._id}`, {
+      .put(`https://community-storytelling.onrender.com/story/${editingStory._id}`, {
         content: editedParagraph,
       })
       .then((response) => {
@@ -87,7 +94,7 @@ const StoryPage = () => {
 
   const handlePost = () => {
     axios
-      .post("http://localhost:3000/story", {
+      .post("https://community-storytelling.onrender.com/story", {
         title: newTitle,
         paragraphs: [{ content: newContent }],
         token: document.cookie.replace("username=", ""),
@@ -112,7 +119,7 @@ const StoryPage = () => {
     );
     if (isConfirmed) {
       axios
-        .delete(`http://localhost:3000/story/${storyId}`)
+        .delete(`https://community-storytelling.onrender.com/story/${storyId}`)
         .then((response) => {
           console.log("Story deleted successfully:", response.data);
           const updatedStories = stories.filter(
@@ -128,7 +135,7 @@ const StoryPage = () => {
 
   return (
     <div className="relative bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center text-white">
-      <UserInfoBox username={username} email={email} />
+      <UserInfoBox username={username} email={email} onLogout={handleLogout} />
       <h1 className="text-4xl font-bold mb-8 text-center">Stories</h1>
 
       {/* Dropdown to select user */}
