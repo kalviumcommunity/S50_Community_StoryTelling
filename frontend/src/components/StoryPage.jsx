@@ -12,7 +12,7 @@ const StoryPage = () => {
   const [selectedUser, setSelectedUser] = useState("");
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState("");
-  const [Email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -128,7 +128,7 @@ const StoryPage = () => {
 
   return (
     <div className="relative bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center text-white">
-      <UserInfoBox username={username} email={Email} />
+      <UserInfoBox username={username} email={email} />
       <h1 className="text-4xl font-bold mb-8 text-center">Stories</h1>
 
       {/* Dropdown to select user */}
@@ -149,7 +149,7 @@ const StoryPage = () => {
 
       {/* Create Post Section */}
       <div className="text-black mb-8">
-        <h2 className="text-xl font-bold">Create Post</h2>
+        <h2 className="text-xl font-bold text-white">Create Post</h2>
         <input
           type="text"
           placeholder="Title"

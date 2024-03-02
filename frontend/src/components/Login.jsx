@@ -39,7 +39,7 @@ const LoginForm = () => {
         // Save JWT token in cookie
         document.cookie = `username=${data.token}; expires=${new Date(
           Date.now() + 3600000
-        ).toUTCString()}; path=/`;
+        ).toUTCString()}; path=/; HttpOnly; Secure`;        
         // console.log("kk",document.cookie)
 
         setIsLoggedIn(true);

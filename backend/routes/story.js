@@ -69,15 +69,15 @@ router.post("/", validateStoryData, async (req, res) => {
     // const { token } = req.body;
     const payload = jwt.verify(token, SECRET_KEY);
 
-    console.log("payload", payload);
+    // console.log("payload", payload);
     const username = payload.username;
 
     const email = payload.email;
-    console.log("email",email)
+    // console.log("email",email)
     // console.log("name",username);
     const user = await User.find({ username }); // Finding the user based on the username
     if (!user) {
-      return res.status(404).json({ error: "User not found" }); // Sending not found response if user not found
+      return res.status(401).json({ error: "User not found" }); // Sending not found response if user not found
     }
     // console.log("user",user);
     req.body.paragraphs[0].author = user[0].username;
@@ -156,11 +156,21 @@ router.delete("/:id", validateStoryId, async (req, res) => {
 
   try {
     const { id } = req.params; // Extracting story ID from request parameters
+    const userId = req.user.id; // Assuming you have user information in req.user
+
+    const story = await Story.findById(id); // Finding the story by ID
+    if (!story) {
+      return res.status(404).json({ error: "Story not found with provided ID" }); // Sending not found response if story not found
+    }
+
+    // Check if the authenticated user is the owner of the story
+    if (story.userId !== userId) {
+      return res.status(403).json({ error: "You are not authorized to delete this story" }); // Sending forbidden response if user is not authorized
+    }
+
     const deletedStory = await Story.findByIdAndDelete(id); // Finding and deleting the story by ID
     if (!deletedStory) {
-      return res
-        .status(404)
-        .json({ error: "Story not found with provided ID" }); // Sending not found response if story not found
+      return res.status(404).json({ error: "Story not found with provided ID" }); // Sending not found response if story not found
     }
     res.json({ message: "Story deleted successfully" }); // Sending success message as JSON response
   } catch (err) {
@@ -168,5 +178,6 @@ router.delete("/:id", validateStoryId, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" }); // Sending internal server error response
   }
 });
+
 
 module.exports = router; // Exporting the router for external use
