@@ -1,4 +1,3 @@
-// StoryPage.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
@@ -10,29 +9,31 @@ const StoryPage = () => {
   const [editedParagraph, setEditedParagraph] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
+  const [selectedUser, setSelectedUser] = useState("");
+  const [users, setUsers] = useState([]);
   const [username, setUsername] = useState("");
-
-  // function getCookie(name) {
-  //   const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-  //   return cookieValue ? cookieValue.pop() : '';
-  // }
+  const [Email, setEmail] = useState("");
 
   useEffect(() => {
     fetchData();
-    // const storedUsername = getCookie("username");
-    // if (storedUsername) {
-    //   setUsername(storedUsername);
-    // }
   }, []);
 
   const fetchData = () => {
     axios
       .get("http://localhost:3000/story")
       .then((response) => {
-        console.log(response.data);
         setStories(response.data);
+        // Extract unique usernames from stories and set them to the state
+        const uniqueUsers = [
+          ...new Set(response.data.map((story) => story.paragraphs[0].author)),
+        ];
+        setUsers(uniqueUsers);
       })
       .catch((error) => console.error("Error fetching data:", error));
+  };
+
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
   };
 
   const handleLike = (storyId) => {
@@ -63,7 +64,6 @@ const StoryPage = () => {
         content: editedParagraph,
       })
       .then((response) => {
-        console.log("Paragraph updated successfully:", response.data);
         const updatedStories = stories.map((story) => {
           if (story._id === editingStory._id) {
             return {
@@ -86,7 +86,6 @@ const StoryPage = () => {
   };
 
   const handlePost = () => {
-    console.log("Posting story:", newTitle, newContent);
     axios
       .post("http://localhost:3000/story", {
         title: newTitle,
@@ -94,12 +93,13 @@ const StoryPage = () => {
         token: document.cookie.replace("username=", ""),
       })
       .then((response) => {
-        console.log("Post successful:", response.data);
-        // Append the new story to the existing stories
         setStories((prevStories) => [...prevStories, response.data]);
-        // Clear input fields
         setNewTitle("");
         setNewContent("");
+        const author = response.data.paragraphs[0].author;
+        setUsername(author);
+        const email = response.data.email;
+        setEmail(email);
       })
       .catch((error) => {
         console.error("Error posting story:", error);
@@ -126,24 +126,29 @@ const StoryPage = () => {
     }
   };
 
-  // function deleteCookie(name) {
-  //   document.cookie =
-  //     name + "=; expires=Thu, 01 Jan 1000 00:00:00 UTC; path=/;";
-  // }
-
-  // const handleLogout = () => {
-  //   // deleteCookie("username");
-  //   window.location.href = "/";
-  // };
-
   return (
     <div className="relative bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center text-white">
-      <UserInfoBox username={username} />
-      {/* onLogout={handleLogout} */}
+      <UserInfoBox username={username} email={Email} />
       <h1 className="text-4xl font-bold mb-8 text-center">Stories</h1>
 
+      {/* Dropdown to select user */}
+      <div className="mb-8">
+        <select
+          value={selectedUser}
+          onChange={(e) => handleUserSelect(e.target.value)}
+          className="w-full border border-gray-300 rounded p-2 mb-4 bg-white text-black"
+        >
+          <option value="">All</option>
+          {users.map((user, index) => (
+            <option key={index} value={user}>
+              {user}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Create Post Section */}
-      <div className=" text-black mb-8">
+      <div className="text-black mb-8">
         <h2 className="text-xl font-bold">Create Post</h2>
         <input
           type="text"
@@ -171,38 +176,43 @@ const StoryPage = () => {
       {stories ? (
         <div>
           {/* Display title, the first paragraph of each story, and like/edit buttons */}
-          {stories.map((story, index) => (
-            <div key={index} className="mb-8">
-              <h2 className="text-2xl font-bold">{story.title}</h2>
-              <p className="mt-2">{story.paragraphs[0].content}</p>
-              <div className="flex items-center mt-4">
-                <button
-                  className="flex items-center text-blue-500 mr-4"
-                  onClick={() => handleLike(story._id)}
-                >
-                  <FaThumbsUp className="mr-2" />
-                  Like
-                </button>
-                <button
-                  className="flex items-center text-green-500 mr-4"
-                  onClick={() => handleEdit(story)}
-                >
-                  <FaEdit className="mr-2" />
-                  Edit
-                </button>
-                <button
-                  className="flex items-center text-red-500"
-                  onClick={() => handleDelete(story._id)}
-                >
-                  <FaTrash className="mr-2" />
-                  Delete
-                </button>
-                <span className="ml-2 text-white bg-black inline-block shadow-md p-1.5 rounded-sm">
-                  Posted by: {story.postedBy}
-                </span>
+          {stories
+            .filter(
+              (story) =>
+                !selectedUser || story.paragraphs[0].author === selectedUser
+            )
+            .map((story, index) => (
+              <div key={index} className="mb-8">
+                <h2 className="text-2xl font-bold">{story.title}</h2>
+                <p className="mt-2">{story.paragraphs[0].content}</p>
+                <div className="flex items-center mt-4">
+                  <button
+                    className="flex items-center text-blue-500 mr-4"
+                    onClick={() => handleLike(story._id)}
+                  >
+                    <FaThumbsUp className="mr-2" />
+                    Like
+                  </button>
+                  <button
+                    className="flex items-center text-green-500 mr-4"
+                    onClick={() => handleEdit(story)}
+                  >
+                    <FaEdit className="mr-2" />
+                    Edit
+                  </button>
+                  <button
+                    className="flex items-center text-red-500"
+                    onClick={() => handleDelete(story._id)}
+                  >
+                    <FaTrash className="mr-2" />
+                    Delete
+                  </button>
+                  <span className="ml-2 text-white bg-black inline-block shadow-md p-1.5 rounded-sm">
+                    Posted by: {story.paragraphs[0].author}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       ) : (
         <p>Loading...</p>

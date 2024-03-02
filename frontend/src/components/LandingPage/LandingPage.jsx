@@ -21,10 +21,7 @@ const LandingPage = () => {
         imagination.
       </p>
       <div className="flex space-x-4">
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Link
             to="/signup"
             className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded flex items-center"
@@ -32,10 +29,7 @@ const LandingPage = () => {
             <FaUserPlus className="mr-2" /> Sign Up
           </Link>
         </motion.div>
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Link
             to="/login"
             className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded flex items-center"
@@ -43,10 +37,7 @@ const LandingPage = () => {
             <FaSignInAlt className="mr-2" /> Login
           </Link>
         </motion.div>
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Link
             to="/story"
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"

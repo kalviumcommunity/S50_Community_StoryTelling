@@ -111,7 +111,7 @@ router.post("/login", validateUserData, async (req, res) => {
     }
 
     // If username and password are valid, generate JWT
-    const token = jwt.sign({ username: user.username }, SECRET_KEY, {
+    const token = jwt.sign({ username: user.username, email:user.email }, SECRET_KEY, {
       expiresIn: "1h",
     });
     // console.log(token)

@@ -34,10 +34,12 @@ const LoginForm = () => {
         }
 
         const data = await response.json();
-        console.log("Login response:", data);
+        // console.log("Login response:", data);
 
         // Save JWT token in cookie
-        document.cookie = `username=${data.token}; expires=${new Date(Date.now() + 3600000).toUTCString()}; path=/`; 
+        document.cookie = `username=${data.token}; expires=${new Date(
+          Date.now() + 3600000
+        ).toUTCString()}; path=/`;
         // console.log("kk",document.cookie)
 
         setIsLoggedIn(true);
