@@ -36,7 +36,7 @@ const SignupForm = () => {
           }),
         });
         if (response.ok) {
-          console.log("User signed up successfully");
+          // console.log("User signed up successfully");
           // Optionally reset form data after successful submission
           setFormData({
             username: "",
@@ -82,7 +82,9 @@ const SignupForm = () => {
       transition={{ duration: 1 }}
       className="text-black bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-neutral-900 via-gray-900 to-indigo-800 min-h-screen flex flex-col justify-center items-center"
     >
-      <h1 className="text-4xl font-bold mb-8 text-center text-white">SIGN UP</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center text-white">
+        SIGN UP
+      </h1>
       <form onSubmit={handleSubmit} className="text-black">
         <div className="text-black mb-4">
           <input
