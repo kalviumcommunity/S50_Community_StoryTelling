@@ -21,7 +21,7 @@ const LoginForm = () => {
     const validationErrors = validate(formData);
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await fetch("https://community-storytelling.onrender.com/user/login", {
+        const response = await fetch("http://localhost:3000/user/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -39,7 +39,7 @@ const LoginForm = () => {
         // Save JWT token in cookie
         document.cookie = `username=${data.token}; expires=${new Date(
           Date.now() + 3600000
-        ).toUTCString()}; path=/; HttpOnly; Secure`;        
+        ).toUTCString()}; path=/;`;        
         // console.log("kk",document.cookie)
 
         setIsLoggedIn(true);

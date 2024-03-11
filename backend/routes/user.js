@@ -38,6 +38,9 @@ const validateUserData = [
 //     .json({ message: "Cookie set successfully" });
 // });
 
+router.post("/converttoken" , validateUserData)
+
+
 // GET route to fetch all users
 router.get("/", async (req, res) => {
   try {
@@ -102,12 +105,12 @@ router.post("/login", validateUserData, async (req, res) => {
     const user = await User.findOne({ username });
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      return res.status(401).json({ error: "Invalid username" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      return res.status(401).json({ error: "Invalid password" });
     }
 
     // If username and password are valid, generate JWT
@@ -121,7 +124,6 @@ router.post("/login", validateUserData, async (req, res) => {
       httpOnly: true, 
       secure: true, // set to true if your application is served over HTTPS
       maxAge: 3600000,
-      sameSite: 'Lax' // set to 'Strict' or 'Lax' based on your requirements
     }); 
     
     // Send the token in the response body

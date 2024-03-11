@@ -23,7 +23,7 @@ const validateStoryData = [
 // GET route to fetch all stories
 router.get("/", async (req, res) => {
   try {
-    const stories = await Story.find(); // Fetching all stories from the database
+    const stories = await Story.find().sort({'paragraphs.createdAt': -1});// Fetching all stories from the database
     res.json(stories); // Sending the fetched stories as JSON response
   } catch (err) {
     console.error("Error fetching stories:", err); // Logging error if fetching stories fails
@@ -113,7 +113,7 @@ router.put("/:id", async (req, res) => {
         .json({ error: "Story not found with provided ID" }); // Sending not found response if story not found
     }
 
-    updatedStory.paragraphs[0].content += req.body.content; // Appending content to the first paragraph's content
+    updatedStory.paragraphs[0].content = req.body.content; // Appending content to the first paragraph's content
 
     await updatedStory.save(); // Saving the updated story
     res.json(updatedStory); // Sending the updated story as JSON response
@@ -156,21 +156,11 @@ router.delete("/:id", validateStoryId, async (req, res) => {
 
   try {
     const { id } = req.params; // Extracting story ID from request parameters
-    const userId = req.user.id; // Assuming you have user information in req.user
-
-    const story = await Story.findById(id); // Finding the story by ID
-    if (!story) {
-      return res.status(404).json({ error: "Story not found with provided ID" }); // Sending not found response if story not found
-    }
-
-    // Check if the authenticated user is the owner of the story
-    if (story.userId !== userId) {
-      return res.status(403).json({ error: "You are not authorized to delete this story" }); // Sending forbidden response if user is not authorized
-    }
-
     const deletedStory = await Story.findByIdAndDelete(id); // Finding and deleting the story by ID
     if (!deletedStory) {
-      return res.status(404).json({ error: "Story not found with provided ID" }); // Sending not found response if story not found
+      return res
+        .status(404)
+        .json({ error: "Story not found with provided ID" }); // Sending not found response if story not found
     }
     res.json({ message: "Story deleted successfully" }); // Sending success message as JSON response
   } catch (err) {
@@ -178,6 +168,5 @@ router.delete("/:id", validateStoryId, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" }); // Sending internal server error response
   }
 });
-
 
 module.exports = router; // Exporting the router for external use

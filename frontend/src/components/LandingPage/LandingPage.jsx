@@ -38,12 +38,6 @@ const LandingPage = () => {
           </Link>
         </motion.div>
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-          <Link
-            to="/story"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
-          >
-            <FaSignInAlt className="mr-2" /> Test
-          </Link>
         </motion.div>
       </div>
     </motion.div>
