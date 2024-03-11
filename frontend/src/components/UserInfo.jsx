@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import axios from 'axios'
 
 const UserInfoBox = ({ username, email, onLogout, onDeleteAccount }) => {
   return (
@@ -8,9 +9,6 @@ const UserInfoBox = ({ username, email, onLogout, onDeleteAccount }) => {
       <div className="mt-4">
         <button className="text-red-500 mr-2" onClick={onLogout}>
           Logout
-        </button>
-        <button className="text-red-800" onClick={onDeleteAccount}>
-          Delete Account
         </button>
       </div>
     </div>

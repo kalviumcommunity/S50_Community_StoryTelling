@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -19,12 +20,13 @@ const SignupForm = () => {
     e.preventDefault();
     const validationErrors = validate(formData);
     if (Object.keys(validationErrors).length === 0) {
+      setErrors({});
       if (formData.password !== formData.repeatPassword) {
         setErrors({ repeatPassword: "Passwords do not match" });
         return;
       }
       try {
-        const response = await fetch("https://community-storytelling.onrender.com/user", {
+        const response = await fetch("http://localhost:3000/user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -35,6 +37,7 @@ const SignupForm = () => {
             password: formData.password,
           }),
         });
+        console.log(response);
         if (response.ok) {
           // console.log("User signed up successfully");
           // Optionally reset form data after successful submission
@@ -44,8 +47,10 @@ const SignupForm = () => {
             password: "",
             repeatPassword: "",
           });
+          navigate("/login");
         } else {
           console.error("Failed to sign up user");
+          setErrors({"username": "Username already exists","email": "Email already exists"});
         }
       } catch (error) {
         console.error("Error occurred while signing up:", error);

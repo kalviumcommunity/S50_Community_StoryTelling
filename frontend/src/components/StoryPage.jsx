@@ -3,6 +3,8 @@ import axios from "axios";
 import { FaThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
 import UserInfoBox from "./UserInfo";
 import { useNavigate } from "react-router-dom";
+// import jwt_decode from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 
 const StoryPage = () => {
   const navigate = useNavigate();
@@ -18,11 +20,12 @@ const StoryPage = () => {
 
   useEffect(() => {
     fetchData();
+    getUsernameFromCookie(); // Fetch username from cookie on initial load
   }, []);
 
   const fetchData = () => {
     axios
-      .get("https://community-storytelling.onrender.com/story")
+      .get("http://localhost:3000/story")
       .then((response) => {
         setStories(response.data);
         // Extract unique usernames from stories and set them to the state
@@ -34,13 +37,17 @@ const StoryPage = () => {
       .catch((error) => console.error("Error fetching data:", error));
   };
 
-  const handleUserSelect = (user) => {
-    setSelectedUser(user);
+  const getUsernameFromCookie = () => {
+    // Get token from cookie
+    const token = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*=\s*([^;]*).*$)|^.*$/, "$1");
+    // Decode token to get username
+    const decodedToken = jwtDecode(token);
+    setUsername(decodedToken.username);
+    setEmail(decodedToken.email)
   };
 
-  const handleLike = (storyId) => {
-    console.log(`Liked story with ID ${storyId}`);
-    console.log("WIP");
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
   };
 
   const handleEdit = (story) => {
@@ -53,10 +60,10 @@ const StoryPage = () => {
     setEditedParagraph("");
   };
   const handleLogout = () => {
-    document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     navigate("/login");
   };
-
 
   const handleSave = () => {
     // Check if editedParagraph is empty
@@ -67,9 +74,12 @@ const StoryPage = () => {
     }
 
     axios
-      .put(`https://community-storytelling.onrender.com/story/${editingStory._id}`, {
-        content: editedParagraph,
-      })
+      .put(
+        `http://localhost:3000/story/${editingStory._id}`,
+        {
+          content: editedParagraph,
+        }
+      )
       .then((response) => {
         const updatedStories = stories.map((story) => {
           if (story._id === editingStory._id) {
@@ -94,7 +104,7 @@ const StoryPage = () => {
 
   const handlePost = () => {
     axios
-      .post("https://community-storytelling.onrender.com/story", {
+      .post("http://localhost:3000/story", {
         title: newTitle,
         paragraphs: [{ content: newContent }],
         token: document.cookie.replace("username=", ""),
@@ -106,11 +116,13 @@ const StoryPage = () => {
         const author = response.data.paragraphs[0].author;
         setUsername(author);
         const email = response.data.email;
-        setEmail(email);
+        
+        fetchData();
       })
       .catch((error) => {
         console.error("Error posting story:", error);
       });
+      // fetchData();
   };
 
   const handleDelete = (storyId) => {
@@ -119,7 +131,7 @@ const StoryPage = () => {
     );
     if (isConfirmed) {
       axios
-        .delete(`https://community-storytelling.onrender.com/story/${storyId}`)
+        .delete(`http://localhost:3000/story/${storyId}`)
         .then((response) => {
           console.log("Story deleted successfully:", response.data);
           const updatedStories = stories.filter(
@@ -193,13 +205,6 @@ const StoryPage = () => {
                 <h2 className="text-2xl font-bold">{story.title}</h2>
                 <p className="mt-2">{story.paragraphs[0].content}</p>
                 <div className="flex items-center mt-4">
-                  <button
-                    className="flex items-center text-blue-500 mr-4"
-                    onClick={() => handleLike(story._id)}
-                  >
-                    <FaThumbsUp className="mr-2" />
-                    Like
-                  </button>
                   <button
                     className="flex items-center text-green-500 mr-4"
                     onClick={() => handleEdit(story)}
